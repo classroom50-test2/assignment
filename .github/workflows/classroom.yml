@@ -1,0 +1,24 @@
+name: Autograde
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  autograde:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compile
+        run: gcc -Wall -Werror -o hello hello.c
+
+      - name: Run and check
+        # diff against an exact-bytes expected stream (printf preserves the
+        # trailing newline that command-substitution `$(./hello)` would strip).
+        run: |
+          ./hello > actual.txt
+          printf 'hello, world\n' > expected.txt
+          diff actual.txt expected.txt
+          echo "PASS"
